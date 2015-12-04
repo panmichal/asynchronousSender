@@ -27,7 +27,7 @@ and start sending with:
 ```
 
 ### How it works
-AsynchronousSender gets your table lenght and calls jQuery Ajax request and send first data. When server responses to complete callback, AsynchronousSender increases iteratior and call self again for next data in table recursively till the end.
+AsynchronousSender gets your table length and calls jQuery Ajax request and send first data. When server responses to complete callback, AsynchronousSender increases iteratior and call self again for next data in table recursively till the end.
 
 ### How to modify for your own purposes
 If you want to set own url in the hardcoded way or change type from the JSON to e.x the XML format, just change those two lines:

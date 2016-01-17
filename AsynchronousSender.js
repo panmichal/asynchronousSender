@@ -1,7 +1,7 @@
 function AsynchronousGetSender(table, url){
     var self = this;
     this.table = table;
-    this.iteration = 0;
+    this.iteration = 1;
     this.total = table.length;
 
     this.url = url;
@@ -16,7 +16,7 @@ function AsynchronousGetSender(table, url){
     }
 
     this.SendNext = function(){
-      if(self.iteration < self.total-1){
+      if(self.iteration < self.total){
         self.DuringAction();
         self.iteration++;
         self.SendData();
@@ -24,7 +24,7 @@ function AsynchronousGetSender(table, url){
     }
 
     this.IsFinished = function(){
-      if(self.iteration == self.total){
+      if(self.iteration >= self.total){
         self.FinishedAction();
       }
     }
@@ -36,11 +36,10 @@ function AsynchronousGetSender(table, url){
             async: "true",
             dataType: self.type,
             data:{
-                data: self.table[self.iteration]
+                data: self.table[self.iteration-1]
             },
             success:function(data){},
             complete: function(data){
-                console.log("Parsed "+(self.iteration+1)+"/"+self.total);
                 self.SendNext();
                 self.IsFinished();
             }

@@ -6,27 +6,24 @@ class AsynchronousGetSender {
   }
 
   send() {
-    const chunkPromise = (index=0) => {
-      if(index >= this.table.length)
-        return $.Deferred().resolve().promise();
-      else {
-        return $
-          .ajax({
-              type: 'post',
-              url: this.url,
-              dataType: self.type,
-              data:{
-                  data: this.table[index++]
-              }
-          })
-          .then(() => chunkPromise(index));
-      }
-    };
-    chunkPromise()
-      .then(() => {
-        console.log('WYSLANO!');
+    const promises = this.table.map(chunk => {
+      $.ajax({
+        type: 'post',
+        url: this.url,
+        dataType: self.type,
+        data:{
+            data: chunk
+        }
       })
-      .fail(console.log.bind(console));
+    });
+
+    promises.reduce((chain, promise) => {
+      return chain.then(promise);
+    }, $.Deferred().resolve())
+    .then(() => {
+      console.log("SUCCESS!");
+    })
+    .fail(console.log.bind(console))
   }
 };
 $(() => {

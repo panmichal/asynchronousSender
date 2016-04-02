@@ -7,7 +7,7 @@ class AsynchronousGetSender {
 
   send() {
     const promises = this.table.map(chunk => {
-      $.ajax({
+      return $.ajax({
         type: 'post',
         url: this.url,
         dataType: self.type,

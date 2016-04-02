@@ -1,48 +1,37 @@
-function AsynchronousGetSender(table, url){
-    var self = this;
+class AsynchronousGetSender {
+  constructor(table, url, type='json') {
     this.table = table;
-    this.iteration = 1;
-    this.total = table.length;
-
     this.url = url;
-    this.type = "json";
+    this.type = type;
+  }
 
-    this.DuringAction = function(){
-      console.log("Response number: "+self.iteration);
-    }
-
-    this.FinishedAction = function(){
-      console.log("Finished all!");
-    }
-
-    this.SendNext = function(){
-      if(self.iteration < self.total){
-        self.DuringAction();
-        self.iteration++;
-        self.SendData();
+  send() {
+    const chunkPromise = (index=0) => {
+      if(index >= this.table.length)
+        return $.Deferred().resolve().promise();
+      else {
+        return $
+          .ajax({
+              type: 'post',
+              url: this.url,
+              dataType: self.type,
+              data:{
+                  data: this.table[index++]
+              }
+          })
+          .then(() => chunkPromise(index));
       }
-    }
-
-    this.IsFinished = function(){
-      if(self.iteration >= self.total){
-        self.FinishedAction();
-      }
-    }
-
-    this.SendData = function(){
-        $.ajax({
-            type: "GET",
-            url: self.url,
-            async: "true",
-            dataType: self.type,
-            data:{
-                data: self.table[self.iteration-1]
-            },
-            success:function(data){},
-            complete: function(data){
-                self.SendNext();
-                self.IsFinished();
-            }
-        });
-    }
-}
+    };
+    chunkPromise()
+      .then(() => {
+        console.log('WYSLANO!');
+      })
+      .fail(console.log.bind(console));
+  }
+};
+$(() => {
+  (new AsynchronousGetSender([
+      {"Song Author": "Snoop Dogg", "Title": "So Many Pros"},
+      {"Song Author": "Disturbed", "Title": "The Light"}
+  ], 'dataAnalyzer/')).send();
+});
